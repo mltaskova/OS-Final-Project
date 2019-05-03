@@ -1,9 +1,11 @@
 from besteffortbroadcast import BestEffortBroadcast
 import multiprocessing
+from multiprocessing import Process
 import random
 import socket
 import json
 import sys
+import time
 
 from Crypto.PublicKey import RSA
 from Crypto import Random
@@ -19,22 +21,27 @@ class ChatBox:
         self.port = port
         self.friend_list = {}
         self.key_list = {}
+        self.approved = {}  # for authentication
         self.queue = multiprocessing.Queue()
         self.beb = BestEffortBroadcast(process_id=int(self.port), addr_str=self.addr,
                                        callback=self.chat_deliver, arg_callback=self.queue)
 
-    # authentication send/deliver methods go here:
-    def send_to_server(self, mesg):
-        # Initiate a client socket to send to chat server as the beb is to send messages to friends
-        client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        try:
-            # Connecting to chat server
-            client_socket.connect(("127.0.0.1", 11000))
-        except socket.error:
-            print("Cannot connect to chat server.")
-            return
-        client_socket.send(mesg.encode())
-        client_socket.close()
+    # # authentication send/deliver methods go here:
+    # def send_to_client(self, port, msg):
+    #     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    #     try:
+    #         # Connecting to chat server
+    #         client_socket.connect(("127.0.0.1", int(port)))
+    #     except socket.error:
+    #         print("Cannot connect to {}".format(self.friend_list.get(port)))
+    #         return
+    #     client_socket.send(msg.encode())
+    #     client_socket.close()
+    #
+    # def permission_thread_response(self, message):
+    #     print("Server : {}".format(message))
+    #     response = input("")
+    #     self.send_to_client(11100, str(self.port) + response)
 
     def chat_deliver(self, mesg, queue):
         if mesg is not None:
@@ -55,14 +62,15 @@ class ChatBox:
                 print("Server : {}".format(message))
             # permission request
             elif int(sender_id) == -3:
-                print("Server : {}".format(message))
-                self.send_to_server(str(self.port) + "+y")
+                return
+            # key update
+            elif int(sender_id) == -4:
+                message = json.loads(message)
+                self.key_list = message
+                print("keys: {}".format(self.key_list))
+                return
             # if it is a common message from friends, print it out
             elif message:
-                if message.startswith("PK*"):
-                    msg = message.split('*')[-1]
-                    self.key_list.update({int(sender_id): msg})
-                    print("got {} for {}".format(str(self.key_list.get(int(sender_id))), str(sender_id)))
                 sender_name = self.friend_list.get(str(sender_id))
                 print("{} : {}".format(sender_name, message))
 
@@ -101,7 +109,7 @@ def main():
     except socket.error:
         print("Cannot connect to chat server.")
         return
-    mesg = str(port) + "+" + "New client:" + name
+    mesg = str(port) + "+" + "New client:" + name + ":PK*" + str(chat_box.public_key)
     client_socket.send(mesg.encode())
     client_socket.close()
 
