@@ -1,4 +1,10 @@
 from perfectpointtopointlinks import PerfectPointToPointLinks
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import PKCS1_OAEP
+from Crypto.Cipher import PKCS1_v1_5
+from Crypto.Hash import SHA
+from Crypto import Random
+from base64 import b64encode, b64decode
 
 
 class BestEffortBroadcast:
@@ -16,6 +22,17 @@ class BestEffortBroadcast:
         if message is not None:
             self.deliver_call_back((sender_id, message), self.arg_callback)
 
+    def encrypt_message(self, a_message, publickey):
+        c = PKCS1_v1_5.new(publickey)
+        encoded_encrypted_msg = c.encrypt(b64encode(a_message.encode()))
+        return encoded_encrypted_msg
+
     def broadcast(self, message, process_id_list):
-        for process_id in process_id_list:
-            self.links.send(process_id, self.address, message)
+        Random.atfork()
+        for process_id in process_id_list.keys():
+            temp = process_id_list.get(process_id)
+            k = RSA.importKey(temp)
+            msg = self.encrypt_message(message, k)
+            print(len(msg))
+            print(msg)
+            self.links.send(process_id, self.address, msg)

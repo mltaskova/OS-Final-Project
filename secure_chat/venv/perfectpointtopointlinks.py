@@ -1,5 +1,6 @@
 import socket
 from multiprocessing import Process
+import time
 
 
 class PerfectPointToPointLinks:
@@ -20,19 +21,24 @@ class PerfectPointToPointLinks:
             client_socket.connect((addr_str, int(recipient_process_port)))
         except socket.error:
             print("Friend {} has not joined.".format(recipient_process_port))
-        mesg = str(self.port) + "+" + message
-        client_socket.send(mesg.encode())
+        mesg = str(self.port) + "+" + str(message)
+        client_socket.sendall(mesg.encode())
         client_socket.close()
 
     def deliver(self, arg_callback):
         while True:
             (connection, address) = self.server_socket.accept()
+            message = ""
+            data = ''
             buf = connection.recv(2048)
-            message = None
-            if buf:
+            while buf:
                 message = buf.decode()
-                sender_port = message.split("+")[0]
-                message = message.split("+")[1]
+                buf = connection.recv(2048)
+                data += message
+            if data:
+                sender_port = data.split("+")[0]
+                msg = data.split("+", 1)[1:]
+                message = message.join(msg)
             connection.close()
             arg_callback(int(sender_port), message)
 

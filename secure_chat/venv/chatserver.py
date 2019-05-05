@@ -28,10 +28,12 @@ class ChatServer:
     def send(self, message):
         for port in self.clients.keys():
             client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            client_socket.settimeout(2)
             try:
                 client_socket.connect((self.ADDRESS, int(port)))
             except socket.error:
                 print("Cannot connect to {}.".format(self.clients.get(port)))
+                client_socket.close()
                 continue
             client_socket.send(message.encode())
             client_socket.close()
@@ -98,13 +100,16 @@ class ChatServer:
         # Second send is to notify who just joins/quits
         if message.startswith("New client:"):
             name = message.split(':')[1]
-            pk = message.split('PK*')[1]
+            pk = message.split(':', 2)[2]
             self.clients.update({int(sender_port): name})
-            self.keys.update({int(sender_port): pk})
             self.send_address_list()
+            self.keys.update({int(sender_port): pk})
             self.send_key_list()
             message = "-2" + "+" + "{} just joined the network.".format(name)
             self.send(message)
+        # elif message == "pk_request":
+        #     self.send_key_list()
+        #     return
         elif message == "{quit}":
             name = self.clients.get(int(sender_port))
             message = "-2" + "+" + "{} just left the conversation.".format(name)

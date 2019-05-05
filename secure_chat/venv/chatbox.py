@@ -1,6 +1,7 @@
 from besteffortbroadcast import BestEffortBroadcast
 import multiprocessing
 from multiprocessing import Process
+from base64 import b64decode, b64encode
 import random
 import socket
 import json
@@ -9,13 +10,17 @@ import time
 
 from Crypto.PublicKey import RSA
 from Crypto import Random
+from Crypto.Hash import SHA
+from Crypto.Cipher import PKCS1_OAEP
+from Crypto.Cipher import PKCS1_v1_5
 
 import threading
 
 class ChatBox:
     def __init__(self, name, address, port):
-        self.private_key = RSA.generate(1024, Random.new().read)
-        self.public_key = self.private_key.publickey()
+        self.key_pair = RSA.generate(1024, Random.new().read)
+        self.public_key = RSA.importKey(self.key_pair.publickey().exportKey('PEM'))
+        self.private_key = RSA.importKey(self.key_pair.exportKey('PEM'))
         self.name = name
         self.addr = address
         self.port = port
@@ -23,8 +28,10 @@ class ChatBox:
         self.key_list = {}
         self.approved = {}  # for authentication
         self.queue = multiprocessing.Queue()
+        self.key_queue = multiprocessing.Queue()
         self.beb = BestEffortBroadcast(process_id=int(self.port), addr_str=self.addr,
                                        callback=self.chat_deliver, arg_callback=self.queue)
+        # Random.atfork()
 
     # # authentication send/deliver methods go here:
     # def send_to_client(self, port, msg):
@@ -37,13 +44,22 @@ class ChatBox:
     #         return
     #     client_socket.send(msg.encode())
     #     client_socket.close()
-    #
+    # #
     # def permission_thread_response(self, message):
     #     print("Server : {}".format(message))
     #     response = input("")
     #     self.send_to_client(11100, str(self.port) + response)
+    
+    def decrypt_message(self, encoded_encrypted_msg):
+        c = PKCS1_v1_5.new(self.private_key)
+        s = Random.get_random_bytes(128)
+        print(encoded_encrypted_msg)
+        print(len(encoded_encrypted_msg))
+        decoded_decrypted_msg = c.decrypt(encoded_encrypted_msg, s)
+        return decoded_decrypted_msg
 
     def chat_deliver(self, mesg, queue):
+        Random.atfork()
         if mesg is not None:
             sender_id, message = mesg
             # If it is a client update message from server, update the friend list
@@ -65,14 +81,17 @@ class ChatBox:
                 return
             # key update
             elif int(sender_id) == -4:
+                while not self.key_queue.empty():
+                    self.key_queue.get(block=False)
                 message = json.loads(message)
+                self.key_queue.put(message)
                 self.key_list = message
-                print("keys: {}".format(self.key_list))
-                return
+                print("keys:" + str(self.key_list))
             # if it is a common message from friends, print it out
             elif message:
                 sender_name = self.friend_list.get(str(sender_id))
-                print("{} : {}".format(sender_name, message))
+                msg = self.decrypt_message(message)
+                print("{} : {}".format(sender_name, msg.decode()))
 
     def update_friend_list(self):
         # Get the friend list from multiprocessing queue and put it back to use later
@@ -80,13 +99,20 @@ class ChatBox:
             self.friend_list = self.queue.get(block=False)
             self.queue.put(self.friend_list)
 
+    def update_key_list(self):
+        # Get the friend list from multiprocessing queue and put it back to use later
+        if not self.key_queue.empty():
+            self.key_list = self.key_queue.get(block=False)
+            self.key_queue.put(self.key_list)
+
     def send(self, message):
         # Get the current friend list before sending out messages
-        self.update_friend_list()
+        self.update_key_list()
         # Get ports out of the hash map / dictionary
-        process_id_list = list(self.friend_list.keys())
-        process_id_list = list(map(int, process_id_list))
-        self.beb.broadcast(message, process_id_list)
+        member_list = {}
+        for p in self.key_list.keys():
+            member_list.update({int(p): self.key_list.get(p)})
+        self.beb.broadcast(message, member_list)
 
 
 def main():
@@ -109,8 +135,8 @@ def main():
     except socket.error:
         print("Cannot connect to chat server.")
         return
-    mesg = str(port) + "+" + "New client:" + name + ":PK*" + str(chat_box.public_key)
-    client_socket.send(mesg.encode())
+    mesg = str(port) + "+" + "New client:" + name + ":"
+    client_socket.sendall(mesg.encode().__add__(chat_box.public_key.exportKey("PEM")))
     client_socket.close()
 
     # Sending messages
