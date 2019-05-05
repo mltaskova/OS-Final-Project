@@ -31,25 +31,7 @@ class ChatBox:
         self.key_queue = multiprocessing.Queue()
         self.beb = BestEffortBroadcast(process_id=int(self.port), addr_str=self.addr,
                                        callback=self.chat_deliver, arg_callback=self.queue)
-        # Random.atfork()
-
-    # # authentication send/deliver methods go here:
-    # def send_to_client(self, port, msg):
-    #     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    #     try:
-    #         # Connecting to chat server
-    #         client_socket.connect(("127.0.0.1", int(port)))
-    #     except socket.error:
-    #         print("Cannot connect to {}".format(self.friend_list.get(port)))
-    #         return
-    #     client_socket.send(msg.encode())
-    #     client_socket.close()
-    # #
-    # def permission_thread_response(self, message):
-    #     print("Server : {}".format(message))
-    #     response = input("")
-    #     self.send_to_client(11100, str(self.port) + response)
-    
+       
     def decrypt_message(self, encoded_encrypted_msg):
         c = PKCS1_v1_5.new(self.private_key)
         s = Random.get_random_bytes(128)

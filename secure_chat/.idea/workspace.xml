@@ -2,11 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="09b42c80-6049-46b5-9dcc-5fd97df9f966" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/besteffortbroadcast.py" beforeDir="false" afterPath="$PROJECT_DIR$/venv/besteffortbroadcast.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/venv/chatbox.py" beforeDir="false" afterPath="$PROJECT_DIR$/venv/chatbox.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/venv/chatserver.py" beforeDir="false" afterPath="$PROJECT_DIR$/venv/chatserver.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/perfectpointtopointlinks.py" beforeDir="false" afterPath="$PROJECT_DIR$/venv/perfectpointtopointlinks.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -61,12 +58,12 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="Python Console" value="15" />
-          <entry key="py" value="5496" />
+          <entry key="py" value="5559" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Python" value="5511" />
+          <entry key="Python" value="5574" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -86,13 +83,12 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/venv/chatserver.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1500">
-              <caret line="100" selection-start-line="100" selection-end-line="100" />
+            <state relative-caret-position="539">
+              <caret line="39" selection-start-line="39" selection-end-line="39" />
               <folding>
                 <element signature="e#0#61#0" expanded="true" />
-                <marker date="1556952187000" expanded="true" signature="1524:3291" ph="..." />
-                <marker date="1556952187000" expanded="true" signature="1919:3291" ph="..." />
-                <marker date="1556952187000" expanded="true" signature="3499:3598" ph="..." />
+                <marker date="1557092552000" expanded="true" signature="1424:1429" ph="..." />
+                <marker date="1557092552000" expanded="true" signature="1637:1736" ph="..." />
               </folding>
             </state>
           </provider>
@@ -101,11 +97,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/venv/chatbox.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="157">
-              <caret line="53" column="44" lean-forward="true" selection-start-line="53" selection-start-column="44" selection-end-line="53" selection-end-column="44" />
+            <state relative-caret-position="176">
+              <caret line="33" column="7" selection-start-line="33" selection-start-column="7" selection-end-line="33" selection-end-column="7" />
               <folding>
                 <element signature="e#0#51#0" expanded="true" />
-                <marker date="1557092165000" expanded="true" signature="1915:1924" ph="..." />
+                <marker date="1557092552000" expanded="true" signature="1191:1200" ph="..." />
               </folding>
             </state>
           </provider>
@@ -114,7 +110,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/venv/perfectpointtopointlinks.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="163">
+            <state relative-caret-position="345">
               <caret line="23" column="50" selection-start-line="23" selection-start-column="50" selection-end-line="23" selection-end-column="50" />
               <folding>
                 <element signature="e#0#13#0" expanded="true" />
@@ -186,9 +182,9 @@
       <list>
         <option value="$PROJECT_DIR$/venv/chat_server.py" />
         <option value="$PROJECT_DIR$/venv/chat_client.py" />
-        <option value="$PROJECT_DIR$/venv/chatserver.py" />
         <option value="$PROJECT_DIR$/venv/besteffortbroadcast.py" />
         <option value="$PROJECT_DIR$/venv/perfectpointtopointlinks.py" />
+        <option value="$PROJECT_DIR$/venv/chatserver.py" />
         <option value="$PROJECT_DIR$/venv/chatbox.py" />
       </list>
     </option>
@@ -370,6 +366,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="127" y="23" width="1163" height="819" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.2469352" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -421,19 +418,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="164">
           <caret line="211" selection-start-line="211" selection-end-line="211" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/venv/chatserver.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1500">
-          <caret line="100" selection-start-line="100" selection-end-line="100" />
-          <folding>
-            <element signature="e#0#61#0" expanded="true" />
-            <marker date="1556952187000" expanded="true" signature="1524:3291" ph="..." />
-            <marker date="1556952187000" expanded="true" signature="1919:3291" ph="..." />
-            <marker date="1556952187000" expanded="true" signature="3499:3598" ph="..." />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -489,9 +473,21 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/venv/chatserver.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="539">
+          <caret line="39" selection-start-line="39" selection-end-line="39" />
+          <folding>
+            <element signature="e#0#61#0" expanded="true" />
+            <marker date="1557092552000" expanded="true" signature="1424:1429" ph="..." />
+            <marker date="1557092552000" expanded="true" signature="1637:1736" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/venv/perfectpointtopointlinks.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="163">
+        <state relative-caret-position="345">
           <caret line="23" column="50" selection-start-line="23" selection-start-column="50" selection-end-line="23" selection-end-column="50" />
           <folding>
             <element signature="e#0#13#0" expanded="true" />
@@ -501,11 +497,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/venv/chatbox.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="157">
-          <caret line="53" column="44" lean-forward="true" selection-start-line="53" selection-start-column="44" selection-end-line="53" selection-end-column="44" />
+        <state relative-caret-position="176">
+          <caret line="33" column="7" selection-start-line="33" selection-start-column="7" selection-end-line="33" selection-end-column="7" />
           <folding>
             <element signature="e#0#51#0" expanded="true" />
-            <marker date="1557092165000" expanded="true" signature="1915:1924" ph="..." />
+            <marker date="1557092552000" expanded="true" signature="1191:1200" ph="..." />
           </folding>
         </state>
       </provider>

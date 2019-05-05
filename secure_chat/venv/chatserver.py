@@ -38,51 +38,6 @@ class ChatServer:
             client_socket.send(message.encode())
             client_socket.close()
 
-    # # authentication send/deliver methods go here:
-    # def send_to_client(self, port, message):
-    #     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    #     try:
-    #         client_socket.connect((self.ADDRESS, int(port)))
-    #     except socket.error:
-    #         print("Cannot connect to {}.".format(self.clients.get(port)))
-    #     client_socket.send(message.encode())
-    #     client_socket.close()
-    #
-    # def permission_thread(self, s_port, name):
-    #     # for each current client
-    #     mesg = "-3+is {} allowed to join your chat group? y/n".format(name)
-    #     # for port in self.clients.keys():
-    #     #     self.send_to_client(port, mesg)
-    #     self.send(mesg)
-    #     approvals = {}
-    #     # get response here!!!
-    #     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    #     server_socket.bind((self.ADDRESS, 11100))
-    #     server_socket.listen(len(self.clients))
-    #     i = 0
-    #     while True:
-    #         connection, address = server_socket.accept()
-    #         buf = connection.recv(2048)
-    #         message = None
-    #         if buf:
-    #             message = buf.decode()
-    #             sender_port = message.split("+")[0]
-    #             message = message.split("+")[1]
-    #         connection.close()
-    #         if message == "y":
-    #             approvals.update({int(sender_port): 1})
-    #         elif message == "n":
-    #             approvals.update({int(sender_port): 0})
-    #         if i >= len(self.clients):
-    #             break
-    #         i += 1
-    #     server_socket.close()
-    #     self.clients.update({int(s_port): name})
-    #     msg = "-1+" + json.dumps(self.clients)
-    #     for port in approvals.keys():
-    #         if approvals.get(port):
-    #             self.send_to_client(port, msg)
-
     # Send the current client list to everyone
     def send_address_list(self):
         message = json.dumps(self.clients)
@@ -107,9 +62,9 @@ class ChatServer:
             self.send_key_list()
             message = "-2" + "+" + "{} just joined the network.".format(name)
             self.send(message)
-        # elif message == "pk_request":
-        #     self.send_key_list()
-        #     return
+        elif message.startswith("permission"):
+            perm = message.split("*")[1]
+            # update permission list?
         elif message == "{quit}":
             name = self.clients.get(int(sender_port))
             message = "-2" + "+" + "{} just left the conversation.".format(name)
