@@ -18,7 +18,7 @@ class ChatServer:
         # a dictionary which acts like a hash map
         self.clients = {}
         self.context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_1)
-        # self.approvals = {}
+        self.approvals = {}
         self.just_delivered = False
         # This server link is to deliver
         self.server_link = PerfectPointToPointLinks(port=self.PORT, addr_str=self.ADDRESS, 
@@ -30,7 +30,6 @@ class ChatServer:
     def send(self, message):
         for port in self.clients.keys():
             ssocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            # ssocket.settimeout(2)
             client_socket = self.context.wrap_socket(ssocket, server_hostname='localhost')
             try:
                 client_socket.connect((self.ADDRESS, int(port)))
@@ -54,10 +53,11 @@ class ChatServer:
         # Second send is to notify who just joins/quits
         if message.startswith("New client:"):
             name = message.split(':')[1]
-            pk = message.split(':', 2)[2]
             self.clients.update({int(sender_port): name})
             self.send_address_list()
             message = "-2" + "+" + "{} just joined the network.".format(name)
+            self.send(message)
+            message = "-3+let {} join? y/n".format(name)
             self.send(message)
         elif message.startswith("permission"):
             perm = message.split("*")[1]

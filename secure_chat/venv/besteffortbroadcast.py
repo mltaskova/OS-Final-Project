@@ -23,5 +23,5 @@ class BestEffortBroadcast:
             self.deliver_call_back((sender_id, message), self.arg_callback)
 
     def broadcast(self, message, process_id_list):
-        for process_id in process_id_list.keys():
+        for process_id in process_id_list:
             self.links.send(process_id, self.address, message)

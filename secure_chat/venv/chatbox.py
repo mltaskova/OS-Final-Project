@@ -52,7 +52,10 @@ class ChatBox:
                 print("Server : {}".format(message))
             # permission request
             elif int(sender_id) == -3:
-                return
+                print("permission prompt goes here")
+                # if len(self.friend_list) > 1:
+                #     perm = input(message)
+                #     print(perm)
             # if it is a common message from friends, print it out
             elif message:
                 sender_name = self.friend_list.get(str(sender_id))
