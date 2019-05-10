@@ -64,7 +64,6 @@ class ChatServer:
             self.send_address_list()
             self.send(message)
         elif message == '{y}' or message == '{n}':
-            print("got permission")
             self.approvals.append(message)
             if len(self.approvals) == len(self.clients.keys()):
                 if '{n}' not in self.approvals:
