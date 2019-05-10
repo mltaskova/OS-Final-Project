@@ -28,6 +28,7 @@ class ChatBox:
         self.friend_list = {}
         self.context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_1)
         self.approved = {}  # for authentication
+        self.new_client_req = False;
         self.queue = multiprocessing.Queue()
         self.beb = BestEffortBroadcast(process_id=int(self.port), addr_str=self.addr,
                                        callback=self.chat_deliver, arg_callback=self.queue, context= self.context)
@@ -51,11 +52,9 @@ class ChatBox:
             elif int(sender_id) == -2:
                 print("Server : {}".format(message))
             # permission request
-            elif int(sender_id) == -3:
-                print("permission prompt goes here")
-                # if len(self.friend_list) > 1:
-                #     perm = input(message)
-                #     print(perm)
+            # elif int(sender_id) == -3:
+            #     self.approved.update({int(message) : ""})
+            #     self.new_client_req = True
             # if it is a common message from friends, print it out
             elif message:
                 sender_name = self.friend_list.get(str(sender_id))
@@ -107,7 +106,8 @@ def main():
         message = input("")
         # If quit, send quit message to chat server
         if message == '{quit}':
-            client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            ssocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            client_socket = chat_box.context.wrap_socket(ssocket, server_hostname='localhost')
             try:
                 # Connecting to chat server
                 client_socket.connect(("", 11000))
@@ -118,6 +118,18 @@ def main():
             client_socket.send(msg.encode())
             client_socket.close()
             break
+        elif message == '{y}' or message == '{n}':
+            ssocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            client_socket = chat_box.context.wrap_socket(ssocket, server_hostname='localhost')
+            try:
+                # Connecting to chat server
+                client_socket.connect(("", 11000))
+            except socket.error:
+                print("Cannot connect to chat server.")
+                continue
+            msg = str(chat_box.port) + "+" + message
+            client_socket.send(msg.encode())
+            client_socket.close()
         elif not message:
             continue
         # Send to friends if it a common message

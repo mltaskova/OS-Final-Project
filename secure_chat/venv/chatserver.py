@@ -18,7 +18,8 @@ class ChatServer:
         # a dictionary which acts like a hash map
         self.clients = {}
         self.context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_1)
-        self.approvals = {}
+        self.approvals = []
+        self.tuple = (0, "")
         self.just_delivered = False
         # This server link is to deliver
         self.server_link = PerfectPointToPointLinks(port=self.PORT, addr_str=self.ADDRESS, 
@@ -53,21 +54,34 @@ class ChatServer:
         # Second send is to notify who just joins/quits
         if message.startswith("New client:"):
             name = message.split(':')[1]
-            self.clients.update({int(sender_port): name})
-            self.send_address_list()
-            message = "-2" + "+" + "{} just joined the network.".format(name)
-            self.send(message)
-            message = "-3+let {} join? y/n".format(name)
-            self.send(message)
-        elif message.startswith("permission"):
-            perm = message.split("*")[1]
-            # update permission list?
+            if len(self.clients) == 0:
+                self.clients.update({int(sender_port): name})
+                self.send_address_list()
+            else:
+                self.tuple = (int(sender_port), name)
+                message = "-2" + "+" + "let {} join the network?".format(self.tuple[1]) + " Type {y} or {n}"
+                self.send(message)
         elif message == "{quit}":
             name = self.clients.get(int(sender_port))
             message = "-2" + "+" + "{} just left the conversation.".format(name)
             self.clients.pop(int(sender_port), None)
             self.send_address_list()
             self.send(message)
+        elif message == '{y}' or message == '{n}':
+            print("got permission")
+            self.approvals.append(message)
+            if len(self.approvals) == len(self.clients.keys()):
+                if '{n}' not in self.approvals:
+                    self.approvals = []
+                    self.clients.update({self.tuple[0]: self.tuple[1]})
+                    self.send_address_list()
+                    message = "-2" + "+" + "{} just joined the network.".format(self.tuple[1])
+                    self.send(message)
+                else:
+                    message = "-2" + "+" + "{} was denied access to the network.".format(self.tuple[1])
+                    self.send(message)
+                    self.approvals = []
+                    self.tuple = (0, "")
         else:
             return
         print(self.clients)
