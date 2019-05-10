@@ -9,32 +9,18 @@ import sys
 import time
 import ssl
 
-from Crypto.PublicKey import RSA
-from Crypto import Random
-from Crypto.Hash import SHA
-from Crypto.Cipher import PKCS1_OAEP
-from Crypto.Cipher import PKCS1_v1_5
-
-import threading
-
 class ChatBox:
     def __init__(self, name, address, port):
-        self.key_pair = RSA.generate(1024, Random.new().read)
-        self.public_key = RSA.importKey(self.key_pair.publickey().exportKey('PEM'))
-        self.private_key = RSA.importKey(self.key_pair.exportKey('PEM'))
         self.name = name
         self.addr = address
         self.port = port
         self.friend_list = {}
         self.context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_1)
-        self.approved = {}  # for authentication
-        self.new_client_req = False;
         self.queue = multiprocessing.Queue()
         self.beb = BestEffortBroadcast(process_id=int(self.port), addr_str=self.addr,
                                        callback=self.chat_deliver, arg_callback=self.queue, context= self.context)
 
     def chat_deliver(self, mesg, queue):
-        Random.atfork()
         if mesg is not None:
             sender_id, message = mesg
             # If it is a client update message from server, update the friend list
@@ -51,10 +37,6 @@ class ChatBox:
             # If it is a notification from server, print the notification
             elif int(sender_id) == -2:
                 print("Server : {}".format(message))
-            # permission request
-            # elif int(sender_id) == -3:
-            #     self.approved.update({int(message) : ""})
-            #     self.new_client_req = True
             # if it is a common message from friends, print it out
             elif message:
                 sender_name = self.friend_list.get(str(sender_id))

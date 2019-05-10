@@ -2,11 +2,7 @@ from perfectpointtopointlinks import PerfectPointToPointLinks
 import json
 import socket
 import time
-import threading
 import ssl
-
-from Crypto.PublicKey import RSA
-from Crypto import Random
 
 # This is the chat server which keeps track of the people in the chat application
 
